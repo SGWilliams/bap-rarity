@@ -19,7 +19,7 @@ import gapconfig
 # Import other packages
 import requests
 import pandas as pd
-import pysb
+from sciencebasepy import SbSession
 from io import StringIO
 import os
 
@@ -42,89 +42,10 @@ def ConnectToSB(username=gapconfig.sbUserName, password=gapconfig.sbWord):
     password -- your ScienceBase password.
     '''
 
-    sb = pysb.SbSession()
+    sb = SbSession()
     sb.login(username, password)
     return sb
 
-## -------------------Attach file to ScienceBase Item---------------
-def AttachFile(sppCode, itemID, filePath):
-    '''
-    Uploads a file to a species' habitat map ScienceBase item. Returns the
-        ID of the item that it attached to. Replaces it if already present.
-    
-    Arguments:
-    sppCode -- gap spp code
-    itemID -- sciencebase item id
-    filePath -- path to the file
-    '''
-
-    try:
-        # Connect to ScienceBase
-        #sb = ConnectToSB()
-        
-        # Get the species item
-        sppItem = sb.get_item(itemID)
-        
-        # Establish if file present
-        filePres = 0
-        fileName = filePath[-16:]
-        files = sppItem["files"]
-        for f in files:
-            if f["name"].find(fileName) > -1:
-                filePres = 1
-      
-        # Upload the file
-        if filePres == 1:
-            print("file exists - replacing")
-            sb.replace_file(filePath, sppItem)
-        elif filePres == 0:
-            print("file does not exists - creating")
-            sb.upload_file_to_item(sppItem, filePath, scrape_file=False)
-                
-        # Return the SppCode and SbID
-        sppID = sppCode + ' : ' + itemID
-        return sppID
-    
-    except Exception as e:
-        print(e)
-        return False
-
-## -------------------Add Title to Attached File---------------
-def AddTitle(sppCode, itemID, fileName, fileTitle):
-    '''
-    Add a Title to a file attached to an SB Item.
-    
-    Arguments:
-    sppCode -- gap spp code
-    itemID -- sciencebase item id
-    fileName -- name of file attached to item
-    title -- title string
-    '''
-
-    try:
-        # Connect to ScienceBase
-        #sb = ConnectToSB()
-        
-        # Get the species item
-        sppItem = sb.get_item(itemID)     
-
-        # add title to itis json file
-        files = sppItem["files"]
-        for f in files:
-            # update the description of the attached file
-            if f["name"].find(fileName) > -1:
-                #print('found: '+ fileName)
-                f["title"] = fileTitle
-            sb.update_item(sppItem)
-                
-        # Return the SppCode and SbID
-        sppID = sppCode + ' : ' + itemID
-        return sppID
-    
-    except Exception as e:
-        print(e)
-        return False
-    
 ## -------------Replace null variables with empty string-----------------
 def xstr(s):
     if s is None:
@@ -149,6 +70,7 @@ tbSpp = pd.merge(gapSpp, iucnGap, how='inner', left_on='GAP_code',
 cols = tbSpp.columns
 cols = cols.map(lambda x: x.replace(' ', '_') if isinstance(x, (str, unicode)) else x)
 tbSpp.columns = cols
+
 # =======================================================================
 # SET UP LOOP ON SPECIES
 # Iterate through table
@@ -202,7 +124,8 @@ for row in tbSpp.itertuples(index=True, name='Pandas'):
         # extract population trend
         IUCNtnd = xstr(IUCNjsonN["result"][0]["populationtrend"])
         print(' IUCNtnd: '+IUCNtnd)
-    
+
+##   Pulling IUCN info based on Species Common Name
 #    sppName = 'Trogon elegans'
 #    url = "http://apiv3.iucnredlist.org/api/v3/species/"+sppName+"?token="+os.environ["IUCN_TOKEN"]
 #    IUCNjson = requests.get(url).json()

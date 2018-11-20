@@ -12,10 +12,6 @@ Created on 14nov2018
 @author: sgwillia
 =======================================================================
 """
-# Import gapconfig variables
-import sys
-sys.path.append('C:/Code')
-import gapconfig
 import pyodbc
 import pandas as pd
 import pandas.io.sql as psql
@@ -90,6 +86,38 @@ dfSpp = psql.read_sql(strSQL, conn)
 tbSpp = pd.DataFrame(dfSpp)
    
 # =======================================================================
+# Look at dataframe
+tbSpp
+
+# Look at dataframe column names
+tbSpp.columns
+
+# Look at data from one column
+tbSpp['strUC']
+
+# Look at data from one row based on row index
+tbSpp.iloc[0]
+# now set as a variable
+row0 = tbSpp.iloc[0]
+# it's an object that you can call fields from
+row0.intITIScode
+type(row0.intITIScode)
+
+# Look at data from one row based on value in column
+tbSpp.loc[tbSpp['strUC'] == 'bBAEAx']
+# now set as a variable
+rowSpp = tbSpp.loc[tbSpp['strUC'] == 'bBAEAx']
+# you can also call fields from that
+rowSpp.intITIScode
+type(rowSpp.intITIScode)
+
+# Look at data from one column, one row via row index number
+tbSpp['strUC'][0]
+tbSpp['strUC'][1719]
+
+
+
+# =======================================================================
 # SET UP LOOP ON SPECIES
 # Iterate through DB table
 for row in tbSpp.itertuples(index=True, name='Pandas'):    
@@ -108,68 +136,10 @@ for row in tbSpp.itertuples(index=True, name='Pandas'):
     intITIScode = getattr(row,"intITIScode")
     strSbHabID = getattr(row,"strSbUrlHM")[-24:]
 
-    if strUC == 'aFBFRx':  # reset sppCode if script fails along the way
+    if strUC == 'aHELLa':  # reset sppCode if script fails along the way
         print(strUC)
-        print(' ' + strScientificName)
-        print(' ' + strSubSciNameText)
-        print(' ' + strSciName)
+        print('strScientificName: ' + strScientificName)
+        print('strSubSciNameText: ' + strSubSciNameText)
+        print('strSciName: ' + strSciName)
     
-        # pull itis data down, extract taxa hierarchy, reformat and create json
-        ITISstring = "http://services.itis.gov/?wt=json&q=tsn:{0}".format(intITIScode)
-        url = bis.itis.getITISSearchURL(ITISstring,False,False)
-        ITISjson = requests.get(url).json()   
-        hierStr = ITISjson["response"]["docs"][0]["hierarchySoFarWRanks"][0].replace("$","\",\"")
-        hierStr = hierStr.replace(":","\":\"")
-        hierStr = re.sub(r'.*"Kingdom', '{"hierarchySoFarWRanks": {"Kingdom', hierStr)
-        hierStr = hierStr[:-2]+'}}'
-        hierDic = json.loads(hierStr)
-        outJson = strUC + '_ITIS.json'
-        pthJson = outDir + '/' + outJson
-        
-        with open(pthJson, 'w') as jf:
-            json.dump(hierDic, jf)
-        
-        # attach file to SB habitat item
-        AttachFile(strUC, pthJson)
-    
-        # pull down sb item json and add titles
-        # Connect to ScienceBase
-        sb = ConnectToSB()
-        Item = sb.get_item(strSbHabID)
-     
-        # add title to itis json file
-        files = Item["files"]
-        for f in files:
-            # update the description of the json file we just uploaded
-            if f["name"].find(outJson) > -1:
-                f["title"] = "ITIS Information"
-            sb.update_item(Item)
 
-############################################
-
-#    print(hierDic)
-#
-#print('ItisClass: '+hierDic['Class'])
-#print('GapClass: '+strClass)
-#print('ItisOrder: '+hierDic['Order'])
-#print('GapOrder: '+strOrder)
-#print('ItisFamily: '+hierDic['Family'])
-#print('GapFamily: '+strFamily)
-#if hierDic['Family'] != strFamily:
-#    print strUC
-
-
-'''
-CommonName = ITISjson["response"]["docs"][0]["vernacular"][0].replace("$","").split("English")[0]
-print(CommonName)
-SciName = ITISjson["response"]["docs"][0]["nameWInd"]
-print(SciName)
-usage = ITISjson["response"]["docs"][0]["usage"]
-print(usage)
-
-b = bis.itis.checkITISSolr(SciName)
-for x in b['itisData'][0]['commonnames']:
-    print(x['name'])
-print(b['itisData'][0]['nameWOInd'])
-print(b['itisData'][0]['tsn'])
-'''
