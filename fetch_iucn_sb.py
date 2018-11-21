@@ -25,8 +25,8 @@ import os
 
 # =======================================================================
 # LOCAL VARIABLES
-home = "N:/Git_Repositories/fetchSppInfo/"
-outDir = home + 'iucn'
+#home = "N:/Git_Repositories/fetchSppInfo/"
+#outDir = home + 'iucn'
 
 # =======================================================================
 # LOCAL FUNCTIONS 
@@ -56,12 +56,18 @@ def xstr(s):
 # GET SPP AND IUCN-GAP TABLES FROM SB HABMAP ITEM
 sb = ConnectToSB()
 habItem = sb.get_item("527d0a83e4b0850ea0518326")
+
 for file in habItem["files"]:
     if file["name"] == "ScienceBaseHabMapCSV_20180713.csv":
         gapSpp = pd.read_csv(StringIO(sb.get(file["url"])))
     elif file["name"] == "IUCN_Gap.csv":
         iucnGap = pd.read_csv(StringIO(sb.get(file["url"])))
-# combine tables (this inner join limits output to just matched IUCN IDs)
+# look at columns of datafram
+gapSpp.columns
+iucnGap.columns
+
+
+# combine tables (this inner join limits output to 1533 just matched IUCN IDs)
 tbSpp = pd.merge(gapSpp, iucnGap, how='inner', left_on='GAP_code', 
                  right_on='GapSpCode', sort=True,
          suffixes=('_x', '_y'), copy=True)
