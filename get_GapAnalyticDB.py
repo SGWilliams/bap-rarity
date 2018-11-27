@@ -12,13 +12,47 @@ Created on 14nov2018
 @author: sgwillia
 =======================================================================
 """
+import sys
+import socket
 import pyodbc
 import pandas as pd
 import pandas.io.sql as psql
-
 # =======================================================================
 # LOCAL VARIABLES
-home = "N:/Git_Repositories/bap-rarity/"
+# LOCAL VARIABLES
+# set based on local host
+# identify location
+host = socket.gethostname()
+#print(host)
+
+if host == 'Thrasher':
+    # set local paths
+    home = "N:/Git_Repositories/bap-rarity/"
+    sys.path.append('C:/Code')
+    print('HOSTNAME: ' + host)
+    print('HOME DIRECTORY: ' + home)
+elif host == 'Batman10':
+    # set local paths
+    home = "C:/Users/Anne/Git_Repos/bap-rarity/"
+    sys.path.append('C:/Code')
+    print('HOSTNAME: ' + host)
+    print('HOME DIRECTORY: ' + home)
+elif host == 'LEAH':
+    # set local paths
+    home = "C:/Git_Repos/bap-rarity/"
+    sys.path.append('C:/Code')
+    print('HOSTNAME: ' + host)
+    print('HOME DIRECTORY: ' + home)
+elif host == 'BaSIC-MacBook-Air.local':
+    # set local paths
+    home = "/Users/Steve/Git_Repos/bap-rarity/"
+    sys.path.append('/Users/Steve/Documents')
+    print('HOSTNAME: ' + host)
+    print('HOME DIRECTORY: ' + home)
+else:
+    print('HOSTNAME: ' + host + 'is not defined')
+    print('HALTING SCRIPT')
+    sys.exit()
 
 # =======================================================================
 # LOCAL FUNCTIONS 
@@ -46,15 +80,26 @@ def ConnectGapAnalyticDB():
     '''
     Returns a cursor and connection within the Gap_AnalyticDB database.
     '''
-    # Database connection parameters
-    dbConStr = """DRIVER=SQL Server Native Client 11.0;
-                    SERVER=CHUCK\SQL2014;
-                    UID=;
-                    PWD=;
-                    TRUSTED_CONNECTION=Yes;
-                    DATABASE=Gap_AnalyticDB;"""
-
-    return ConnectToDB(dbConStr)
+    if (host == 'Thrasher') or (host == 'Batman10'):
+        # Database connection parameters
+        dbConStr = """DRIVER=SQL Server Native Client 11.0;
+                      SERVER=CHUCK\SQL2014;
+                      UID=;
+                      PWD=;
+                      TRUSTED_CONNECTION=Yes;
+                      DATABASE=Gap_AnalyticDB;
+                   """
+        return ConnectToDB(dbConStr)
+    elif host == 'LEAH':
+        # Database connection parameters
+        dbConStr = """DRIVER=SQL Server Native Client 11.0;
+                      SERVER=CHUCK\SQL2014;
+                      UID=;
+                      PWD=;
+                      TRUSTED_CONNECTION=Yes;
+                      DATABASE=Gap_AnalyticDB;
+                   """
+        return ConnectToDB(dbConStr)
 
 # =======================================================================
 # OPEN DB AND GET TAXA TABLE
@@ -99,14 +144,17 @@ tbSpp['strUC']
 tbSpp.iloc[0]
 # now set as a variable
 row0 = tbSpp.iloc[0]
+row0
 # it's an object that you can call fields from
 row0.intITIScode
+# what object type is it?
 type(row0.intITIScode)
 
 # Look at data from one row based on value in column
 tbSpp.loc[tbSpp['strUC'] == 'bBAEAx']
 # now set as a variable
 rowSpp = tbSpp.loc[tbSpp['strUC'] == 'bBAEAx']
+rowSpp
 # you can also call fields from that
 rowSpp.intITIScode
 type(rowSpp.intITIScode)
