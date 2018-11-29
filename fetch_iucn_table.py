@@ -37,13 +37,13 @@ if host == 'Thrasher':
     print('HOME DIRECTORY: ' + home)
 elif host == 'Batman10':
     # set local paths
-    home = "C:/Users/Anne/Git_Repos/bap-rarity/"
+    home = "C:/Users/Anne/Documents/Git_Repositories/bap-rarity/"
     sys.path.append('C:/Code')
     print('HOSTNAME: ' + host)
     print('HOME DIRECTORY: ' + home)
-elif host == 'LEAH':
+elif host == 'IGSWIDWBWS222':
     # set local paths
-    home = "C:/Git_Repos/bap-rarity/"
+    home = "C:/Users/ldunn/Documents/GitRepo/bap-rarity/"
     sys.path.append('C:/Code')
     print('HOSTNAME: ' + host)
     print('HOME DIRECTORY: ' + home)

@@ -33,13 +33,13 @@ if host == 'Thrasher':
     print('HOME DIRECTORY: ' + home)
 elif host == 'Batman10':
     # set local paths
-    home = "C:/Users/Anne/Git_Repos/bap-rarity/"
+    home = "C:/Users/Anne/Documents/Git_Repositories/bap-rarity/"
     sys.path.append('C:/Code')
     print('HOSTNAME: ' + host)
     print('HOME DIRECTORY: ' + home)
-elif host == 'LEAH':
+elif host == 'IGSWIDWBWS222':
     # set local paths
-    home = "C:/Git_Repos/bap-rarity/"
+    home = "C:/Users/ldunn/Documents/GitRepo/bap-rarity/"
     sys.path.append('C:/Code')
     print('HOSTNAME: ' + host)
     print('HOME DIRECTORY: ' + home)
@@ -90,10 +90,10 @@ def ConnectGapAnalyticDB():
                       DATABASE=Gap_AnalyticDB;
                    """
         return ConnectToDB(dbConStr)
-    elif host == 'LEAH':
+    elif host == 'IGSWIDWBWS222':
         # Database connection parameters
         dbConStr = """DRIVER=SQL Server Native Client 11.0;
-                      SERVER=CHUCK\SQL2014;
+                      SERVER=IGSWIDWBvm181;
                       UID=;
                       PWD=;
                       TRUSTED_CONNECTION=Yes;
@@ -108,22 +108,7 @@ cur, conn = ConnectGapAnalyticDB()
 
 # Pull a table of variables back into a data frame
 sql = """
-SELECT [strUC]
-      ,[strScientificName]
-      ,[strSubSciNameText]
-      ,[strSubspeciesLetter]
-      ,[strCommonName]
-      ,[strSort]
-      ,[strTaxaLetter]
-      ,[intNSglobal]
-      ,[strNSelcode]
-      ,[intITIScode]
-      ,[intGapNSmatch]
-      ,[intGapITISmatch]
-      ,[strSbUrlHM]
-      ,[strDoiHM]
-      ,[strSbUrlRM]
-      ,[strDoiRM]
+SELECT *
   FROM [GAP_AnalyticDB].[dbo].[tblTaxa]"""
 
 strSQL = sql.format(sql)
@@ -141,7 +126,7 @@ tbSpp.columns
 tbSpp['strUC']
 
 # Look at data from one row based on row index
-tbSpp.iloc[0]
+tbSpp.iloc[1718]
 # now set as a variable
 row0 = tbSpp.iloc[0]
 row0
@@ -161,7 +146,7 @@ type(rowSpp.intITIScode)
 
 # Look at data from one column, one row via row index number
 tbSpp['strUC'][0]
-tbSpp['strUC'][1719]
+tbSpp['strUC'][1718]
 
 
 
