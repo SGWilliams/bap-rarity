@@ -1,5 +1,6 @@
-*pyc
+*.pyc
 *.rpt
 *.jmp
 tmp*
 tblSppHucGStatusSummary*
+processing_docs/
