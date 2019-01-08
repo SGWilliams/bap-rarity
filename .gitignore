@@ -3,4 +3,6 @@
 *.jmp
 tmp*
 tblSppHucGStatusSummary*
+tblRarity*
 processing_docs/
+amphibian/
