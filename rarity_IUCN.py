@@ -27,7 +27,7 @@ import sys
 # =======================================================================
 # LOCAL VARIABLES
 # Set variable to use existing output if it exists, otherwise replace
-replaceTable = 'no' # 'yes' to replace
+replaceTable = 'yes' # 'yes' to replace
 
 # set based on local host
 # identify location

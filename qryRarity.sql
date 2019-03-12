@@ -2,9 +2,14 @@ USE GAP_AnalyticDB;
 GO
 
 /*
+qryRarity.sql
 SQL Query for SPP Gap Status By Huc
-Used in Species Rarity Analysis
 
+Summarizes Gap_AnalyticDB data for species rarity analysis.
+Summary by Species, HUC12/L2ecorgion, and GAP Status.
+Utilizes all intersected polygons from Huc12 and Ecoregion 
+ datasets. No hucs are discarded.
+ 
 Output is qtblRarity dB table
 
 Steve Williams

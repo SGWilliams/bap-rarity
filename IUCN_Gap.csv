@@ -1,4 +1,4 @@
-strUC,strSciName,strComName,iucnID,iucnSci,iucnCom,iucnCat,iucnTnd
+gapSppCode,gapSciName,gapComName,iucnID,iucnSci,iucnCom,iucnCat,iucnTnd
 aABSAx,Eurycea waterlooensis,Austin Blind Salamander,59278,Eurycea waterlooensis,Austin Blind Salamander,VU,unknown
 aADSAx,Desmognathus apalachicolae,Apalachicola Dusky Salamander,59244,Desmognathus apalachicolae,Apalachicola Dusky Salamander,LC,stable
 aAGTOx,Anaxyrus nelsoni,Amargosa Toad,3181,Anaxyrus nelsoni,,EN,decreasing
