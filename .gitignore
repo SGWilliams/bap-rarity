@@ -1,0 +1,12 @@
+*.pyc
+*.rpt
+*.jmp
+tmp*
+tblSppHucGStatusSummary*
+tblRarity*
+Local_Notes*
+processing_docs/
+amphibian_xlsdata/
+amphibian.zip
+ecoregion_HUCS/
+ecoregion_HUCS.zip
