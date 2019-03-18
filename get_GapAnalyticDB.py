@@ -18,7 +18,46 @@ import pyodbc
 import pandas as pd
 import pandas.io.sql as psql
 # =======================================================================
+
 # LOCAL VARIABLES
+# set based on local host
+# identify location
+host = socket.gethostname()
+#print(host)
+
+if host == 'Thrasher':
+    # set local paths
+    home = "N:/Git_Repositories/bap-rarity/"
+    sys.path.append('C:/Code')
+    print('HOSTNAME: ' + host)
+    print('HOME DIRECTORY: ' + home)
+elif host == 'Batman10':
+    # set local paths
+    home = "C:/Users/Anne/Documents/Git_Repositories/bap-rarity/"
+    sys.path.append('C:/Code')
+    print('HOSTNAME: ' + host)
+    print('HOME DIRECTORY: ' + home)
+elif host == 'LEAH':
+    # set local paths
+    home = "C:/Git_Repos/bap-rarity/"
+    sys.path.append('C:/Code')
+    print('HOSTNAME: ' + host)
+    print('HOME DIRECTORY: ' + home)
+elif host == 'BaSIC-MacBook-Air.local':
+    # set local paths
+    home = "/Users/Steve/Git_Repos/bap-rarity/"
+    sys.path.append('/Users/Steve/Documents')
+    print('HOSTNAME: ' + host)
+    print('HOME DIRECTORY: ' + home)
+else:
+    print('HOSTNAME: ' + host + 'is not defined')
+    print('HALTING SCRIPT')
+    sys.exit()
+
+# import SB user/password from gapconfig
+import gapconfig
+    
+# =======================================================================
 # LOCAL VARIABLES
 # set based on local host
 # identify location
@@ -93,7 +132,7 @@ def ConnectGapAnalyticDB():
     elif host == 'LEAH':
         # Database connection parameters
         dbConStr = """DRIVER=SQL Server Native Client 11.0;
-                      SERVER=CHUCK\SQL2014;
+                      SERVER=IGWIDWBvm181;;
                       UID=;
                       PWD=;
                       TRUSTED_CONNECTION=Yes;
@@ -161,7 +200,7 @@ type(rowSpp.intITIScode)
 
 # Look at data from one column, one row via row index number
 tbSpp['strUC'][0]
-tbSpp['strUC'][1719]
+tbSpp['strUC'][1718]
 
 
 
