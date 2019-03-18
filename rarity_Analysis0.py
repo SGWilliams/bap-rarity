@@ -23,7 +23,10 @@ import numpy as np
 import os.path
 from sciencebasepy import SbSession
 from io import StringIO
+import urllib
 
+# import SB user/password from sbconfig
+import sbconfig
 # =======================================================================
 # LOCAL VARIABLES
 # Set variable to use existing output if it exists, otherwise replace
@@ -87,6 +90,7 @@ def ConnectToSB(username=sbconfig.sbUserName, password=sbconfig.sbWord):
     return sb
 
 # =======================================================================
+# HABITAT BREADTH
 # Open rarity_GapAnalyticDB.py output
 dfSql = pd.read_csv(tblAmph, dtype=str)
 dtypes = {"hucPix": np.int64,
@@ -99,10 +103,53 @@ dtypes = {"hucPix": np.int64,
 for col, col_type in dtypes.items():
     dfSql[col] = dfSql[col].astype(col_type)
 
-# Calc percent use for spp/huc combinations
+# Calc: percent use for spp/huc combinations
 dfSql['percUse'] = (dfSql['totalSppPix']/dfSql['hucPix'])*100
-
+#dfSql.columns
+#dfSql.head()
 #dfSql.iloc[100]
+
+# Mean percent use across all the hucs in distribution for each spp
+dfMpu = dfSql.groupby(['Spp']).agg({'percUse': ['count','mean']})
+
+# Classify spp with mean percent use <10% as "narrow" habitat breadth,
+#         and >=10% as "wide" habitat breadth
+dfMpu['percUse','breadth'] = np.where(dfMpu['percUse','mean']<10.0, 'narrow', 'wide')
+
+
+# GEOGRAPHIC RANGE
+# Sum totalSppPix for each Spp-L2 combination, save as CSV
+dfSE0 = dfSql.groupby(['Spp','na_l2code']).agg({'totalSppPix':'sum'}).to_csv(home + 'tmpSE0.csv')
+
+# Sum totalSppPix for each Spp for entire CONUS, save as CSV
+dfSE1 = dfSql.groupby(['Spp']).agg({'totalSppPix':'sum'}).to_csv(home + 'tmpSE1.csv')
+
+# Open CSVs and merge
+dfSE0a = pd.read_csv(home + 'tmpSE0.csv')
+dfSE1a = pd.read_csv(home + 'tmpSE1.csv')
+dfSE2 = pd.merge(dfSE0a, dfSE1a, on="Spp", how='inner')
+
+# Percent Spp-L2 (spp-L2 / spp-Conus)
+dfSE2['percL2'] = (dfSE2['totalSppPix_x']/dfSE2['totalSppPix_y'])*100
+
+# Classify Spp-L2 as endemic if >= 50%
+dfSE2['L2endemic'] = np.where(dfSE2['percL2']>=50.0, 'L2 Endemic', '')
+
+# Subset L2 Endemics
+dfSE = dfSE2.loc[dfSE2['L2endemic'] == 'L2 Endemic']
+
+# Download the Jenkins2015 xlsx files from the web
+dls = 'http://biodiversitymapping.org/docs/USA%20amphibian%20species%20lists.xlsx'
+urllib.urlretrieve(dls, home + 'Jenkins2015_AmphSppLists.xlsx')
+
+# Open endemics worksheet
+dfJenEnd = pd.read_excel(open(home + 'Jenkins2015_AmphSppLists.xlsx', 'rb'), sheetname='Endemics')
+
+
+
+
+
+
 
 # Get IUCN-Gap table from SB HabMap item
 sb = ConnectToSB()
