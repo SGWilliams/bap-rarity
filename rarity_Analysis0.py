@@ -24,14 +24,14 @@ Created on 12mar2019
 import sys
 import socket
 import pandas as pd
-import pandas.io.sql as psql
+#import pandas.io.sql as psql
 import numpy as np
-import os.path
+#import os.path
 from sciencebasepy import SbSession
 from io import StringIO
 import urllib
-import requests
-import xml.etree.ElementTree as ET
+#import requests
+#import xml.etree.ElementTree as ET
 
 # import SB user/password from sbconfig
 import sbconfig
@@ -121,7 +121,8 @@ def TaxaWork(Taxa):
             dfGapID = pd.read_csv(StringIO(sb.get(file["url"])))
 
     # Subset to taxa
-    dfGapID = dfGapID[dfGapID['GAP_code'].str.slice(0,1) == t]   
+    dfGapID = dfGapID[dfGapID['GAP_code'].str.slice(0,1) == t]
+    
     # Subset the columns
     dfGapID = dfGapID[['GAP_code', 'common_name', 'scientific_name', 'Global_SEQ_ID', 'OriginUS']]
     # rename the columns
@@ -202,8 +203,72 @@ def TaxaWork(Taxa):
     dfGI = pd.merge(dfGap, dfIUCN, on='gapSppCode', how='outer')
     # Add zeros into blank iucnTrend
     dfGI['iucnTrend'] = dfGI['iucnTrend'].replace(np.nan, 0, regex=True)
-    # Calc Group based on habBreadth, L2endemic and popTrend
-    '''
+dfGI.to_csv(home + 'tmpGI.csv')
+
+    # Set the Jenkins2015 download file based on Taxa
+    dls = 'http://biodiversitymapping.org/docs/USA%20' + taxa + '%20species%20lists.xlsx'
+    # Download the Jenkins2015 xlsx file from the web
+    urllib.urlretrieve(dls, xlsJenk)    
+    # Open worksheets, subset columns, add column for subset sheets
+    Jall = pd.read_excel(open(xlsJenk, 'rb'), sheetname='All species')
+    Jend = pd.read_excel(open(xlsJenk, 'rb'), sheetname='Endemics')
+    Jend = Jend[['Species_ID']]
+    Jend['Jend'] = 1
+    Jgsm = pd.read_excel(open(xlsJenk, 'rb'), sheetname='Globally small ranged')
+    Jgsm = Jgsm[['Species_ID']]
+    Jgsm['Jgsm'] = 1
+    Jusm = pd.read_excel(open(xlsJenk, 'rb'), sheetname='USA small ranged')
+    Jusm = Jusm[['Species_ID']]
+    Jusm['Jusm'] = 1
+    Jthr = pd.read_excel(open(xlsJenk, 'rb'), sheetname='threatened')
+    Jthr = Jthr[['Species_ID']]
+    Jthr['Jthr'] = 1
+# Need to try join on iucnSciName, then iucnCode
+    # Join all sheets together based on Species_ID
+    dfJenk = pd.merge(pd.merge(pd.merge(pd.merge(Jall, Jend, on='Species_ID', how='outer'),
+                                                 Jgsm, on='Species_ID', how='outer'), 
+                                                 Jusm, on='Species_ID', how='outer'), 
+                                                 Jthr, on='Species_ID', how='outer')
+    # Fill in zero where NaN
+    dfJenk = dfJenk.replace(np.nan, 0, regex=True)
+dfJenk2 = dfJenk[['BINOMIAL', 'Species_ID', 'Genus', 'Species', 'Jend']]
+dfJenk2.to_csv(home + 'tmpJenk.csv')
+    
+    # Join Jenkins...
+    dfGIJ = pd.merge(dfGI, dfJenk, left_on='iucnSciName', right_on='BINOMIAL', how='inner')
+    
+    # Calc Endemic=1 if both L2endemic and Jend equal 1
+    '''   
+    L2endemic    Jend    Endemic
+        0          0        0
+        0          1        0
+        1          0        0
+        0          1        1
+    '''    
+    def setGroup(row):
+        if (row['habBreadth'] == 0) & (row['L2endemic'] == 0) & (row['iucnTrend'] == 0):
+            val = 'A'
+        elif (row['habBreadth'] == 0) & (row['L2endemic'] == 1) & (row['iucnTrend'] == 0):
+            val = 'B'
+        elif (row['habBreadth'] == 1) & (row['L2endemic'] == 0) & (row['iucnTrend'] == 0):
+            val = 'C'
+        elif (row['habBreadth'] == 0) & (row['L2endemic'] == 0) & (row['iucnTrend'] == 1):
+            val = 'D'
+        elif (row['habBreadth'] == 1) & (row['L2endemic'] == 1) & (row['iucnTrend'] == 0):
+            val = 'E'
+        elif (row['habBreadth'] == 1) & (row['L2endemic'] == 0) & (row['iucnTrend'] == 1):
+            val = 'F'
+        elif (row['habBreadth'] == 0) & (row['L2endemic'] == 1) & (row['iucnTrend'] == 1):
+            val = 'G'
+        elif (row['habBreadth'] == 1) & (row['L2endemic'] == 1) & (row['iucnTrend'] == 1):
+            val = 'H'
+        else:
+            val = 'X'
+        return val    
+    dfGI['Group'] = dfGI.apply(setGroup, axis=1)
+    dfGIJ['Endemic'] = dfGIJ['L2endemic']==1 AND dfGIJ['Jend']==1
+	# Calc Group based on habBreadth, L2endemic and popTrend
+    '''   
     habBreadth    L2endemic    iucnTrend    Group
         0           0               0       A
         0           1               0       B
@@ -236,35 +301,15 @@ def TaxaWork(Taxa):
         return val    
     dfGI['Group'] = dfGI.apply(setGroup, axis=1)
     
-    # Set the Jenkins2015 download file based on Taxa
-    dls = 'http://biodiversitymapping.org/docs/USA%20' + taxa + '%20species%20lists.xlsx'
-    # Download the Jenkins2015 xlsx file from the web
-    urllib.urlretrieve(dls, xlsJenk)    
-    # Open worksheets, subset columns, add column for subset sheets
-    Jall = pd.read_excel(open(xlsJenk, 'rb'), sheetname='All species')
-    Jend = pd.read_excel(open(xlsJenk, 'rb'), sheetname='Endemics')
-    Jend = Jend[['Species_ID']]
-    Jend['Jend'] = 1
-    Jgsm = pd.read_excel(open(xlsJenk, 'rb'), sheetname='Globally small ranged')
-    Jgsm = Jgsm[['Species_ID']]
-    Jgsm['Jgsm'] = 1
-    Jusm = pd.read_excel(open(xlsJenk, 'rb'), sheetname='USA small ranged')
-    Jusm = Jusm[['Species_ID']]
-    Jusm['Jusm'] = 1
-    Jthr = pd.read_excel(open(xlsJenk, 'rb'), sheetname='threatened')
-    Jthr = Jthr[['Species_ID']]
-    Jthr['Jthr'] = 1
-    # Join all sheets together based on Species_ID
-    dfJenk = pd.merge(pd.merge(pd.merge(pd.merge(Jall, Jend, on='Species_ID', how='outer'),
-                                                 Jgsm, on='Species_ID', how='outer'), 
-                                                 Jusm, on='Species_ID', how='outer'), 
-                                                 Jthr, on='Species_ID', how='outer')
-    # Fill in zero where NaN
-    dfJenk = dfJenk.replace(np.nan, 0, regex=True)
-    
-    # Join Jenkins...
-    dfGIJ = pd.merge(dfGI, dfJenk, left_on='iucnSciName', right_on='BINOMIAL', how='inner')
-    
+
+
+
+
+
+
+
+
+
     # Get GAP-ITIS-NS code table from SB HabMap item
     sb = ConnectToSB()
     habItem = sb.get_item("527d0a83e4b0850ea0518326")
