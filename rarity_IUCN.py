@@ -8,6 +8,7 @@ Retrieves IUCN information from IUCN api and builds a table of
   GAP species code, sciName, comName and IUCN species ID, sciName,
   comName, protection status and population trend.
 
+Output:	tblIUCN.csv
  
 Created on Mon Nov 5 13:21:53 2018
 

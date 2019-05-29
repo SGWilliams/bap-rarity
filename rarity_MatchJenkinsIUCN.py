@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-MatchJenkinsIUCN.py
+rarity_MatchJenkinsIUCN.py
 
 enviroment: base 2.7
 
@@ -8,7 +8,7 @@ Input: Jenkins2015 excel files (https://biodiversitymapping.org/wordpress/index.
        IUCN_Gap.csv table from GAP Habitat Map Collection Item
        ScienceBaseHabMapCSV_<date>.csv table from GAP Habitat Map Collection Item
 
-Output: tblJenkMatch.csv
+Output: tblMatchJenkins.csv
  
 Created on 24may2019
 

@@ -9,7 +9,9 @@ Input: derived from rarity_GapAnalyticDB.py
            tblRarityHucAmph.csv
            tblRarityHucAmph.csv
            tblRarityHucAmph.csv
-       Jenkins2015 excel files (https://biodiversitymapping.org/wordpress/index.php/home/)
+       derived from rarity_MatchJenkinsIUCN.py
+		   tblMatchJenkins.csv
+	   Jenkins2015 excel files (https://biodiversitymapping.org/wordpress/index.php/home/)
        IUCN_Gap.csv table from GAP Habitat Map Collection Item
        ScienceBaseHabMapCSV_<date>.csv table from GAP Habitat Map Collection Item
 
