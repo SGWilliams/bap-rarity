@@ -1,0 +1,85 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  
+  <head>
+    
+      <meta charset="utf-8">
+      <title>Bokeh Plot</title>
+      
+      
+        
+          
+        <link rel="stylesheet" href="https://cdn.pydata.org/bokeh/release/bokeh-1.2.0.min.css" type="text/css" />
+        
+        
+          
+        <script type="text/javascript" src="https://cdn.pydata.org/bokeh/release/bokeh-1.2.0.min.js"></script>
+        <script type="text/javascript">
+            Bokeh.set_log_level("info");
+        </script>
+        
+      
+      
+    
+  </head>
+  
+  
+  <body>
+    
+      
+        
+          
+          
+            
+              <div class="bk-root" id="fe9519af-d2ab-452c-9afa-b2a314e50e4b" data-root-id="7837"></div>
+            
+          
+        
+      
+      
+        <script type="application/json" id="7944">
+          {"2da0d19e-2a5a-4360-b886-ee085cb1034a":{"roots":{"references":[{"attributes":{},"id":"7854","type":"CategoricalTicker"},{"attributes":{"fields":["2015","2016"]},"id":"7863","type":"Stack"},{"attributes":{"ticker":{"id":"7849","type":"BasicTicker"}},"id":"7852","type":"Grid"},{"attributes":{"dimension":1,"ticker":{"id":"7854","type":"CategoricalTicker"}},"id":"7856","type":"Grid"},{"attributes":{},"id":"7844","type":"LinearScale"},{"attributes":{"fields":["2015","2016"]},"id":"7864","type":"Stack"},{"attributes":{"fill_alpha":{"value":0.1},"fill_color":{"value":"#1f77b4"},"height":{"value":0.9},"left":{"expr":{"id":"7860","type":"Stack"}},"line_alpha":{"value":0.1},"line_color":{"value":"#1f77b4"},"right":{"expr":{"id":"7861","type":"Stack"}},"y":{"field":"fruits"}},"id":"7868","type":"HBar"},{"attributes":{"fill_color":{"value":"#c9d9d3"},"height":{"value":0.9},"left":{"expr":{"id":"7860","type":"Stack"}},"line_color":{"value":"#c9d9d3"},"right":{"expr":{"id":"7861","type":"Stack"}},"y":{"field":"fruits"}},"id":"7867","type":"HBar"},{"attributes":{"fill_alpha":{"value":0.1},"fill_color":{"value":"#1f77b4"},"height":{"value":0.9},"left":{"expr":{"id":"7864","type":"Stack"}},"line_alpha":{"value":0.1},"line_color":{"value":"#1f77b4"},"right":{"expr":{"id":"7865","type":"Stack"}},"y":{"field":"fruits"}},"id":"7878","type":"HBar"},{"attributes":{"fill_color":{"value":"#e84d60"},"height":{"value":0.9},"left":{"expr":{"id":"7864","type":"Stack"}},"line_color":{"value":"#e84d60"},"right":{"expr":{"id":"7865","type":"Stack"}},"y":{"field":"fruits"}},"id":"7877","type":"HBar"},{"attributes":{"fields":[]},"id":"7860","type":"Stack"},{"attributes":{"fields":["2015","2016","2017"]},"id":"7865","type":"Stack"},{"attributes":{"source":{"id":"7836","type":"ColumnDataSource"}},"id":"7880","type":"CDSView"},{"attributes":{"data_source":{"id":"7836","type":"ColumnDataSource"},"glyph":{"id":"7867","type":"HBar"},"hover_glyph":null,"muted_glyph":null,"name":"2015","nonselection_glyph":{"id":"7868","type":"HBar"},"selection_glyph":null,"view":{"id":"7870","type":"CDSView"}},"id":"7869","type":"GlyphRenderer"},{"attributes":{"formatter":{"id":"7885","type":"CategoricalTickFormatter"},"ticker":{"id":"7854","type":"CategoricalTicker"}},"id":"7853","type":"CategoricalAxis"},{"attributes":{"source":{"id":"7836","type":"ColumnDataSource"}},"id":"7870","type":"CDSView"},{"attributes":{"text":"Fruit Counts by Year"},"id":"7838","type":"Title"},{"attributes":{"formatter":{"id":"7883","type":"BasicTickFormatter"},"ticker":{"id":"7849","type":"BasicTicker"}},"id":"7848","type":"LinearAxis"},{"attributes":{"data_source":{"id":"7836","type":"ColumnDataSource"},"glyph":{"id":"7877","type":"HBar"},"hover_glyph":null,"muted_glyph":null,"name":"2017","nonselection_glyph":{"id":"7878","type":"HBar"},"selection_glyph":null,"view":{"id":"7880","type":"CDSView"}},"id":"7879","type":"GlyphRenderer"},{"attributes":{},"id":"7849","type":"BasicTicker"},{"attributes":{"below":[{"id":"7848","type":"LinearAxis"}],"center":[{"id":"7852","type":"Grid"},{"id":"7856","type":"Grid"}],"left":[{"id":"7853","type":"CategoricalAxis"}],"plot_height":500,"renderers":[{"id":"7869","type":"GlyphRenderer"},{"id":"7874","type":"GlyphRenderer"},{"id":"7879","type":"GlyphRenderer"}],"title":{"id":"7838","type":"Title"},"toolbar":{"id":"7858","type":"Toolbar"},"toolbar_location":null,"x_range":{"id":"7840","type":"DataRange1d"},"x_scale":{"id":"7844","type":"LinearScale"},"y_range":{"id":"7842","type":"FactorRange"},"y_scale":{"id":"7846","type":"CategoricalScale"}},"id":"7837","subtype":"Figure","type":"Plot"},{"attributes":{},"id":"7886","type":"UnionRenderers"},{"attributes":{"data_source":{"id":"7836","type":"ColumnDataSource"},"glyph":{"id":"7872","type":"HBar"},"hover_glyph":null,"muted_glyph":null,"name":"2016","nonselection_glyph":{"id":"7873","type":"HBar"},"selection_glyph":null,"view":{"id":"7875","type":"CDSView"}},"id":"7874","type":"GlyphRenderer"},{"attributes":{},"id":"7883","type":"BasicTickFormatter"},{"attributes":{"callback":null,"factors":["Apples","Pears","Nectarines","Plums","Grapes","Strawberries"]},"id":"7842","type":"FactorRange"},{"attributes":{},"id":"7885","type":"CategoricalTickFormatter"},{"attributes":{"fill_color":{"value":"#718dbf"},"height":{"value":0.9},"left":{"expr":{"id":"7862","type":"Stack"}},"line_color":{"value":"#718dbf"},"right":{"expr":{"id":"7863","type":"Stack"}},"y":{"field":"fruits"}},"id":"7872","type":"HBar"},{"attributes":{"callback":null,"data":{"2015":[2,1,4,3,2,4],"2016":[5,3,4,2,4,6],"2017":[3,2,4,4,5,3],"fruits":["Apples","Pears","Nectarines","Plums","Grapes","Strawberries"]},"selected":{"id":"7887","type":"Selection"},"selection_policy":{"id":"7886","type":"UnionRenderers"}},"id":"7836","type":"ColumnDataSource"},{"attributes":{"fields":["2015"]},"id":"7862","type":"Stack"},{"attributes":{"source":{"id":"7836","type":"ColumnDataSource"}},"id":"7875","type":"CDSView"},{"attributes":{"fill_alpha":{"value":0.1},"fill_color":{"value":"#1f77b4"},"height":{"value":0.9},"left":{"expr":{"id":"7862","type":"Stack"}},"line_alpha":{"value":0.1},"line_color":{"value":"#1f77b4"},"right":{"expr":{"id":"7863","type":"Stack"}},"y":{"field":"fruits"}},"id":"7873","type":"HBar"},{"attributes":{},"id":"7887","type":"Selection"},{"attributes":{"fields":["2015"]},"id":"7861","type":"Stack"},{"attributes":{"active_drag":"auto","active_inspect":"auto","active_multi":null,"active_scroll":"auto","active_tap":"auto","tools":[{"id":"7857","type":"HoverTool"}]},"id":"7858","type":"Toolbar"},{"attributes":{"callback":null,"tooltips":"name @fruites: @$name"},"id":"7857","type":"HoverTool"},{"attributes":{"callback":null},"id":"7840","type":"DataRange1d"},{"attributes":{},"id":"7846","type":"CategoricalScale"}],"root_ids":["7837"]},"title":"Bokeh Application","version":"1.2.0"}}
+        </script>
+        <script type="text/javascript">
+          (function() {
+            var fn = function() {
+              Bokeh.safely(function() {
+                (function(root) {
+                  function embed_document(root) {
+                    
+                  var docs_json = document.getElementById('7944').textContent;
+                  var render_items = [{"docid":"2da0d19e-2a5a-4360-b886-ee085cb1034a","roots":{"7837":"fe9519af-d2ab-452c-9afa-b2a314e50e4b"}}];
+                  root.Bokeh.embed.embed_items(docs_json, render_items);
+                
+                  }
+                  if (root.Bokeh !== undefined) {
+                    embed_document(root);
+                  } else {
+                    var attempts = 0;
+                    var timer = setInterval(function(root) {
+                      if (root.Bokeh !== undefined) {
+                        embed_document(root);
+                        clearInterval(timer);
+                      }
+                      attempts++;
+                      if (attempts > 100) {
+                        console.log("Bokeh: ERROR: Unable to run BokehJS code because BokehJS library is missing");
+                        clearInterval(timer);
+                      }
+                    }, 10, root)
+                  }
+                })(window);
+              });
+            };
+            if (document.readyState != "loading") fn();
+            else document.addEventListener("DOMContentLoaded", fn);
+          })();
+        </script>
+    
+  </body>
+  
+</html>
