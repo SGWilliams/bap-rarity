@@ -46,6 +46,7 @@ else:
     print('HALTING SCRIPT')
     sys.exit()
 
+'''
 #####################################
 # FIGURE 2 - NationalGroup Distribution
 
@@ -81,7 +82,8 @@ from math import pi
 from bokeh.io import output_file, show
 from bokeh.plotting import figure
 from bokeh.transform import cumsum
-from bokeh.models import LabelSet, ColumnDataSource
+from bokeh.models import LabelSet, ColumnDataSource, FactorRange
+from bokeh.core.properties import value
 
 output_file("fig3.html")
 
@@ -136,7 +138,7 @@ p.axis.visible=False
 p.grid.grid_line_color = None
 
 show(p)
-
+'''
 
 #####################################
 # Figure3 - Ecoregion
@@ -172,6 +174,7 @@ dfSG = dfES.groupby(['na_l2code', 'L2', 'Taxa', 'Subgroup']).size().reset_index(
 dfSGp = pd.pivot_table(dfSG, values = 'count', index=['na_l2code', 'L2', 'Taxa'], columns = 'Subgroup').reset_index()
 #dfSGp.to_csv(home + 'tmpSGp.csv', index=False)
 
+'''#####################################
 # generate horizontal stacked bar chart
 
 output_file("bar_stacked.html")
@@ -199,3 +202,120 @@ p.hbar_stack(years, y='fruits', height=0.9, source=source, color=colors)
 
 show(p)
 output_file("stacked.html")
+
+
+################################
+output_file("hierbars.html")
+
+fruits = ['Apples', 'Pears', 'Nectarines', 'Plums', 'Grapes', 'Strawberries']
+years = ['2015', '2016', '2017']
+
+data = {'fruits' : fruits,
+        '2015'   : [2, 1, 4, 3, 2, 4],
+        '2016'   : [5, 3, 3, 2, 4, 6],
+        '2017'   : [3, 2, 4, 4, 5, 3]}
+
+# this creates [ ("Apples", "2015"), ("Apples", "2016"), ("Apples", "2017"), ("Pears", "2015), ... ]
+y = [ (fruit, year) for fruit in fruits for year in years ]
+counts = sum(zip(data['2015'], data['2016'], data['2017']), ()) # like an hstack
+
+source = ColumnDataSource(data=dict(y=y, counts=counts))
+
+p = figure(y_range=FactorRange(*y), plot_height=500, title="Fruit Counts by Year",
+           toolbar_location=None, tools="")
+
+p.hbar(y='y', right='counts', height=0.9, source=source)
+
+p.x_range.start = 0
+p.y_range.range_padding = 0.1
+#p.yaxis.major_label_orientation = 1
+p.ygrid.grid_line_color = None
+
+show(p)
+
+################################
+output_file("bar_stacked_grouped.html")
+
+#factors = [
+#    ("Q1", "jan"), ("Q1", "feb"), ("Q1", "mar"),
+#    ("Q2", "apr"), ("Q2", "may"), ("Q2", "jun"),
+#    ("Q3", "jul"), ("Q3", "aug"), ("Q3", "sep"),
+#    ("Q4", "oct"), ("Q4", "nov"), ("Q4", "dec"),
+#]
+
+regions = ['east', 'west']
+
+#source = ColumnDataSource(data=dict(
+#    y=factors,
+#    east=[ 5, 5, 6, 5, 5, 4, 5, 6, 7, 8, 6, 9 ],
+#    west=[ 5, 7, 9, 4, 5, 4, 7, 7, 7, 6, 6, 7 ],
+#))
+
+data=dict(
+    qtr=[ 'Q1', 'Q1', 'Q1', 'Q2', 'Q2', 'Q2', 'Q3', 'Q3', 'Q3', 'Q4', 'Q4', 'Q4' ],
+    mon=[ 'jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec' ],
+    east=[ 5, 5, 6, 5, 5, 4, 5, 6, 7, 8, 6, 9 ],
+    west=[ 5, 7, 9, 4, 5, 4, 7, 7, 7, 6, 6, 7 ]
+)
+dfData = pd.DataFrame.from_dict(data)
+dfData['y'] = list(zip(dfData.qtr, dfData.mon))
+factors = dfData.y.unique()
+source = ColumnDataSource(dfData)
+
+
+p = figure(y_range=FactorRange(*factors), plot_height=500,
+           toolbar_location=None, tools="")
+
+p.hbar_stack(regions, y='y', height=0.9, alpha=0.5, color=["blue", "red"], source=source,
+             legend=[value(y) for y in regions])
+
+p.x_range.start = 0
+p.x_range.end = 18
+p.y_range.range_padding = 0.1
+p.yaxis.major_label_orientation = 1
+p.ygrid.grid_line_color = None
+p.legend.location = "center_right"
+p.legend.orientation = "vertical"
+
+show(p)
+'''
+############
+# import graphics components
+from bokeh.io import output_file, show
+from bokeh.plotting import figure
+from bokeh.models import ColumnDataSource, FactorRange
+from bokeh.core.properties import value
+
+output_file("bar_stacked_grouped.html")
+
+dfSGp['y'] = list(zip(dfSGp.L2, dfSGp.Taxa))
+subgroups = ['DD', 'TR']
+factors = dfSGp.y.unique()
+source = ColumnDataSource(dfSGp)
+
+p = figure(y_range=FactorRange(*factors), 
+           plot_height=1000,
+           toolbar_location=None, 
+           tools="")
+
+p.hbar_stack(subgroups, 
+             y='y', 
+             height=0.9, 
+             alpha=0.5, 
+             color=["blue", "red"], 
+             source=source,
+             legend=[value(y) for y in subgroups])
+
+p.x_range.start = 0
+p.x_range.end = 118
+p.y_range.range_padding = 0.1
+#p.yaxis.major_label_orientation = 1
+p.ygrid.grid_line_color = None
+p.legend.location = "center_right"
+p.legend.orientation = "vertical"
+
+show(p)
+####################################
+#listL2 = dfSGp.L2.unique()
+#listTaxa = dfSGp.Taxa.unique()
+#y = [ (L2, Taxa) for L2 in listL2 for Taxa in listTaxa ]

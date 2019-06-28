@@ -1,0 +1,85 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  
+  <head>
+    
+      <meta charset="utf-8">
+      <title>Bokeh Plot</title>
+      
+      
+        
+          
+        <link rel="stylesheet" href="https://cdn.pydata.org/bokeh/release/bokeh-1.0.4.min.css" type="text/css" />
+        
+        
+          
+        <script type="text/javascript" src="https://cdn.pydata.org/bokeh/release/bokeh-1.0.4.min.js"></script>
+        <script type="text/javascript">
+            Bokeh.set_log_level("info");
+        </script>
+        
+      
+      
+    
+  </head>
+  
+  
+  <body>
+    
+      
+        
+          
+          
+            
+              <div class="bk-root" id="8f9bb7c1-52fc-4bc5-87c2-344cb3d44d73" data-root-id="2334"></div>
+            
+          
+        
+      
+      
+        <script type="application/json" id="2414">
+          {"7e4c0101-64cf-441d-930c-568c2cbe39ca":{"roots":{"references":[{"attributes":{"dimension":1,"grid_line_color":{"value":null},"plot":{"id":"2334","subtype":"Figure","type":"Plot"},"ticker":{"id":"2349","type":"CategoricalTicker"}},"id":"2351","type":"Grid"},{"attributes":{"formatter":{"id":"2359","type":"BasicTickFormatter"},"plot":{"id":"2334","subtype":"Figure","type":"Plot"},"ticker":{"id":"2344","type":"BasicTicker"}},"id":"2343","type":"LinearAxis"},{"attributes":{},"id":"2361","type":"CategoricalTickFormatter"},{"attributes":{},"id":"2359","type":"BasicTickFormatter"},{"attributes":{},"id":"2349","type":"CategoricalTicker"},{"attributes":{"formatter":{"id":"2361","type":"CategoricalTickFormatter"},"plot":{"id":"2334","subtype":"Figure","type":"Plot"},"ticker":{"id":"2349","type":"CategoricalTicker"}},"id":"2348","type":"CategoricalAxis"},{"attributes":{"callback":null,"factors":[["Apples","2015"],["Apples","2016"],["Apples","2017"],["Pears","2015"],["Pears","2016"],["Pears","2017"],["Nectarines","2015"],["Nectarines","2016"],["Nectarines","2017"],["Plums","2015"],["Plums","2016"],["Plums","2017"],["Grapes","2015"],["Grapes","2016"],["Grapes","2017"],["Strawberries","2015"],["Strawberries","2016"],["Strawberries","2017"]],"range_padding":0.1},"id":"2332","type":"FactorRange"},{"attributes":{"below":[{"id":"2343","type":"LinearAxis"}],"left":[{"id":"2348","type":"CategoricalAxis"}],"plot_height":500,"renderers":[{"id":"2343","type":"LinearAxis"},{"id":"2347","type":"Grid"},{"id":"2348","type":"CategoricalAxis"},{"id":"2351","type":"Grid"},{"id":"2356","type":"GlyphRenderer"}],"title":{"id":"2333","type":"Title"},"toolbar":{"id":"2352","type":"Toolbar"},"toolbar_location":null,"x_range":{"id":"2336","type":"DataRange1d"},"x_scale":{"id":"2339","type":"LinearScale"},"y_range":{"id":"2332","type":"FactorRange"},"y_scale":{"id":"2341","type":"CategoricalScale"}},"id":"2334","subtype":"Figure","type":"Plot"},{"attributes":{"plot":null,"text":"Fruit Counts by Year"},"id":"2333","type":"Title"},{"attributes":{},"id":"2364","type":"UnionRenderers"},{"attributes":{"source":{"id":"2331","type":"ColumnDataSource"}},"id":"2357","type":"CDSView"},{"attributes":{"fill_alpha":{"value":0.1},"fill_color":{"value":"#1f77b4"},"height":{"value":0.9},"line_alpha":{"value":0.1},"line_color":{"value":"#1f77b4"},"right":{"field":"counts"},"y":{"field":"y"}},"id":"2355","type":"HBar"},{"attributes":{},"id":"2344","type":"BasicTicker"},{"attributes":{"active_drag":"auto","active_inspect":"auto","active_multi":null,"active_scroll":"auto","active_tap":"auto"},"id":"2352","type":"Toolbar"},{"attributes":{"data_source":{"id":"2331","type":"ColumnDataSource"},"glyph":{"id":"2354","type":"HBar"},"hover_glyph":null,"muted_glyph":null,"nonselection_glyph":{"id":"2355","type":"HBar"},"selection_glyph":null,"view":{"id":"2357","type":"CDSView"}},"id":"2356","type":"GlyphRenderer"},{"attributes":{},"id":"2341","type":"CategoricalScale"},{"attributes":{"callback":null,"start":0},"id":"2336","type":"DataRange1d"},{"attributes":{},"id":"2363","type":"Selection"},{"attributes":{"callback":null,"data":{"counts":[2,5,3,1,3,2,4,3,4,3,2,4,2,4,5,4,6,3],"y":[["Apples","2015"],["Apples","2016"],["Apples","2017"],["Pears","2015"],["Pears","2016"],["Pears","2017"],["Nectarines","2015"],["Nectarines","2016"],["Nectarines","2017"],["Plums","2015"],["Plums","2016"],["Plums","2017"],["Grapes","2015"],["Grapes","2016"],["Grapes","2017"],["Strawberries","2015"],["Strawberries","2016"],["Strawberries","2017"]]},"selected":{"id":"2363","type":"Selection"},"selection_policy":{"id":"2364","type":"UnionRenderers"}},"id":"2331","type":"ColumnDataSource"},{"attributes":{},"id":"2339","type":"LinearScale"},{"attributes":{"plot":{"id":"2334","subtype":"Figure","type":"Plot"},"ticker":{"id":"2344","type":"BasicTicker"}},"id":"2347","type":"Grid"},{"attributes":{"fill_color":{"value":"#1f77b4"},"height":{"value":0.9},"line_color":{"value":"#1f77b4"},"right":{"field":"counts"},"y":{"field":"y"}},"id":"2354","type":"HBar"}],"root_ids":["2334"]},"title":"Bokeh Application","version":"1.0.4"}}
+        </script>
+        <script type="text/javascript">
+          (function() {
+            var fn = function() {
+              Bokeh.safely(function() {
+                (function(root) {
+                  function embed_document(root) {
+                    
+                  var docs_json = document.getElementById('2414').textContent;
+                  var render_items = [{"docid":"7e4c0101-64cf-441d-930c-568c2cbe39ca","roots":{"2334":"8f9bb7c1-52fc-4bc5-87c2-344cb3d44d73"}}];
+                  root.Bokeh.embed.embed_items(docs_json, render_items);
+                
+                  }
+                  if (root.Bokeh !== undefined) {
+                    embed_document(root);
+                  } else {
+                    var attempts = 0;
+                    var timer = setInterval(function(root) {
+                      if (root.Bokeh !== undefined) {
+                        embed_document(root);
+                        clearInterval(timer);
+                      }
+                      attempts++;
+                      if (attempts > 100) {
+                        console.log("Bokeh: ERROR: Unable to run BokehJS code because BokehJS library is missing");
+                        clearInterval(timer);
+                      }
+                    }, 10, root)
+                  }
+                })(window);
+              });
+            };
+            if (document.readyState != "loading") fn();
+            else document.addEventListener("DOMContentLoaded", fn);
+          })();
+        </script>
+    
+  </body>
+  
+</html>
