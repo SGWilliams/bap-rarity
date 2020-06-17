@@ -53,8 +53,81 @@ else:
     sys.exit()
 
 #####################################
-# Figure3 - Ecoregion-Taxa-Subgroup
+# Figure7 - Ecoregion-Taxa-Protection Nationally
 
+from bokeh.io import output_file, show
+from bokeh.models import ColumnDataSource
+from bokeh.palettes import GnBu3, OrRd3
+from bokeh.plotting import figure
+from bokeh.transform import dodge
+
+output_file("bar_stacked_split.html")
+##############################################################################
+
+from bokeh.models import FactorRange
+
+output_file("bars.html")
+
+fruits = ['Apples', 'Pears', 'Nectarines', 'Plums', 'Grapes', 'Strawberries']
+years = ['2015', '2016', '2017']
+
+data = {'fruits' : fruits,
+        '2015'   : [2, 1, 4, 3, 2, 4],
+        '2016'   : [5, 3, 3, 2, 4, 6],
+        '2017'   : [3, 2, 4, 4, 5, 3]}
+
+# this creates [ ("Apples", "2015"), ("Apples", "2016"), ("Apples", "2017"), ("Pears", "2015), ... ]
+x = [ (fruit, year) for fruit in fruits for year in years ]
+counts = sum(zip(data['2015'], data['2016'], data['2017']), ()) # like an hstack
+
+source = ColumnDataSource(data=dict(x=x, counts=counts))
+
+p = figure(x_range=FactorRange(*x), plot_height=250, title="Fruit Counts by Year",
+           toolbar_location=None, tools="")
+
+p.vbar(x='x', top='counts', width=0.9, source=source)
+
+p.y_range.start = 0
+p.x_range.range_padding = 0.1
+p.xaxis.major_label_orientation = 1
+p.xgrid.grid_line_color = None
+
+show(p)
+
+##############################################################################
+
+
+fruits = ['Apples', 'Pears', 'Nectarines', 'Plums', 'Grapes', 'Strawberries']
+years = ["2015", "2016", "2017"]
+
+exports = {'fruits' : fruits,
+           '2015'   : [20, 10, 40, 30, 20, 40],
+           '2016'   : [50, 30, 40, 20, 40, 60],
+           '2017'   : [30, 60, 20, 50, 40, 0]}
+imports = {'fruits' : fruits,
+           '2015'   : [10, 0, 10, 30, 20, 10],
+           '2016'   : [20, 10, 30, 10, 20, 20],
+           '2017'   : [70, 90, 60, 60, 60, 70]}
+
+p = figure(y_range=fruits, plot_height=350, x_range=(0, 200), title="Fruit import/export, by year",
+           toolbar_location=None)
+
+p.hbar_stack(years, y='fruits', height=0.9, color=GnBu3, source=ColumnDataSource(exports),
+             legend=["%s exports" % x for x in years])
+
+p.hbar_stack(years, y='fruits', height=0.9, color=OrRd3, source=ColumnDataSource(imports),
+             legend=["%s imports" % x for x in years])
+
+p.y_range.range_padding = 0.1
+p.ygrid.grid_line_color = None
+p.legend.location = "top_right"
+p.axis.minor_tick_line_color = None
+p.outline_line_color = None
+
+show(p)
+
+
+##############################################################################
 # open ecoregional summary table
 dfES = pd.read_csv(home + 'tblEcoSumm.csv')
 
@@ -73,40 +146,41 @@ def setTaxa(row):
     return val    
 dfES['Taxa'] = dfES.apply(setTaxa, axis=1)
 
-# subset potentially rare and subgroups TR and DD
-dfES = dfES.loc[(dfES['potRare'] == 1) & (dfES['Subgroup'] == 'TR') | (dfES['Subgroup'] == 'DD')]
+## subset potentially rare
+#dfES = dfES.loc[(dfES['potRare'] == 1)]
 
-# rename subgroups to full text
-def setSGtext(row):
-    if (row['Subgroup'] == 'DD'):
-        val = 'Potentially Rare - documented decline'
-    elif (row['Subgroup'] == 'TR'):
-        val = 'Potentially Rare - theoretical risk'
+# create <17% protection column
+def set17(row):
+    if (row['SppPercProt'] <= 17):
+        val = 'Not Protected (<= 17%)'
     else:
-        val = 'wrong'
+        val = 'Protected (> 17%)'
     return val    
-dfES['SGtext'] = dfES.apply(setSGtext, axis=1)
+dfES['lt17'] = dfES.apply(set17, axis=1)
 
 # Create L2 Label column
 dfES['L2'] = dfES['na_l2code'].astype(str) + ' - ' + dfES['na_l2name']
 
-# sum by SGtext
-dfSG = dfES.groupby(['na_l2code', 'L2', 'Taxa', 'SGtext']).size().reset_index(name='count')
-# add zeros where Nan
-dfSG['count'] = dfSG['count'].fillna(0)
-
+# sum by lt17
+dfSG = dfES.groupby(['na_l2code', 
+                     'L2', 
+                     'Taxa', 
+                     'lt17']).size().reset_index(name='count')
 # pivot the table
-dfSGp = pd.pivot_table(dfSG, values = 'count', index=['na_l2code', 'L2', 'Taxa'], columns = 'SGtext').reset_index()
+dfSGp = pd.pivot_table(dfSG, 
+                       values = 'count', 
+                       index=['na_l2code', 'L2', 'Taxa'], 
+                       columns = 'lt17').reset_index()
 # add zeros where Nan
-dfSGp['Potentially Rare - documented decline'] = dfSGp['Potentially Rare - documented decline'].fillna(0)
-dfSGp['Potentially Rare - theoretical risk'] = dfSGp['Potentially Rare - theoretical risk'].fillna(0)
+dfSGp['Not Protected (<= 17%)'] = dfSGp['Not Protected (<= 17%)'].fillna(0)
+dfSGp['Protected (> 17%)'] = dfSGp['Protected (> 17%)'].fillna(0)
 #dfSGp.to_csv(home + 'tmpSGp.csv', index=False)
 
 # sort by L2, Taxa
 dfSGp = dfSGp.sort_values(by=['na_l2code', 'Taxa'], ascending=False)
 
 # find upper limit of x-axis
-dfSGp['max'] = dfSGp['Potentially Rare - documented decline'] + dfSGp['Potentially Rare - theoretical risk']
+dfSGp['max'] = dfSGp['Protected (> 17%)'] + dfSGp['Not Protected (<= 17%)']
 def roundup(x):
     return int(math.ceil(x / 50.0)) * 50
 maxCnt = roundup(dfSGp['max'].max())
@@ -127,13 +201,12 @@ def setColor(row):
 dfSGp['color'] = dfSGp.apply(setColor, axis=1)
 
 # generate graphics
-output_file("fig3.html")
+output_file("fig5.html")
 
 dfSGp['y'] = list(zip(dfSGp.L2, dfSGp.Taxa))
-subgroups = ['Potentially Rare - documented decline', 'Potentially Rare - theoretical risk']
+subgroups = ['Protected (> 17%)', 'Not Protected (<= 17%)']
 factors = dfSGp.y.unique()
 source = ColumnDataSource(dfSGp)
-legend = ['Amphibian', 'Bird', 'Mammal', 'Reptile', 'Potentially Rare - documented decline', 'Potentially Rare - theoretical risk']
 
 p = figure(y_range=FactorRange(*factors), 
            plot_height=1200,
@@ -164,4 +237,4 @@ p.legend.orientation = "horizontal"
 
 
 show(p)
-output_file("fig3.html")
+output_file("fig5.html")

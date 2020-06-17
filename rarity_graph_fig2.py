@@ -103,12 +103,17 @@ def setColor(row):
     return val    
 dfTG['color'] = dfTG.apply(setColor, axis=1)
 
-p = figure(plot_height=500, 
+# create text field for count
+dfTG['Count'] = dfTG['Number'].astype(str)
+
+# implement graphics
+p = figure(plot_height=1000, 
+           plot_width=1000,
            title="Figure 3", 
            toolbar_location=None,
            tools="hover", 
            tooltips="@TG: @Number", 
-           x_range=(-0.5, 1.0))
+           x_range=(-0.5, 0.50))
 
 p.annular_wedge(x=0, y=1, 
         inner_radius=0.1,
@@ -129,17 +134,29 @@ p.annular_wedge(x=0, y=1,
         legend='Taxa', 
         source=dfTG)
 
-dfTG['Group'] = dfTG['Group'].str.pad(33, side = 'left')
+dfTG['Group'] = dfTG['Group'].str.pad(80, side = 'left')
 source = ColumnDataSource(dfTG)
+labelsG = LabelSet(x=0, y=1,
+                   text='Group', 
+                   text_color='black', 
+                   level='annotation',
+                   text_font_size="14pt",
+                   angle=(cumsum('angle', include_zero=True)),
+                   source=source, 
+                   render_mode='canvas')
+p.add_layout(labelsG)
 
-labels = LabelSet(x=0, y=1, 
-                  text='Group', 
-                  level='annotation',
-                  angle=(cumsum('angle', include_zero=True)), 
-                  source=source, 
-                  render_mode='canvas')
-
-p.add_layout(labels)
+dfTG['Count'] = dfTG['Count'].str.pad(80, side = 'left')
+source = ColumnDataSource(dfTG)
+labelsC = LabelSet(x=0, y=1, 
+                   text='Count', 
+                   text_color='white',
+                   level='annotation',
+                   text_font_size="10pt",
+                   angle=(cumsum('angle', include_zero=True)), 
+                   source=source, 
+                   render_mode='canvas')
+p.add_layout(labelsC)
 
 p.axis.axis_label=None
 p.axis.visible=False

@@ -9,9 +9,6 @@ Input: derived from rarity_GapAnalyticDB.py
            tblRarityHucAmph.csv
            tblRarityHucAmph.csv
            tblRarityHucAmph.csv
-       derived from rarity_MatchJenkinsIUCN.py
-		   tblMatchJenkins.csv
-	   Jenkins2015 excel files (https://biodiversitymapping.org/wordpress/index.php/home/)
        IUCN_Gap.csv table from GAP Habitat Map Collection Item
        ScienceBaseHabMapCSV_<date>.csv table from GAP Habitat Map Collection Item
 
@@ -42,7 +39,7 @@ import requests
 host = socket.gethostname()
 #print(host)
 
-if host == 'Thrasher':
+if host == 'Nigel':
     # set local paths
     home = "N:/Git_Repositories/bap-rarity/"
     sys.path.append('C:/Code')
@@ -136,6 +133,7 @@ dfIUCN = dfIUCN[['gapSppCode',
 # Open IUCN data downloaded in original analysis on 
 #   Monday, ‎April ‎3, ‎2017, ‏‎12:01:26 PM by Leah Dunn
 #  (n = 2119)
+print('Combine with IUCN data file...')
 dfIUCNdata = pd.read_table(home + 'IUCN_Tab_DL.txt')
 # Create SciName column
 dfIUCNdata['SciName'] = dfIUCNdata['Genus'] + ' ' + dfIUCNdata['Species']
@@ -188,6 +186,7 @@ header = 'SpeciesID SciName RedListStatus PopulationTrend'
 csvwriter.writerow(header.split())
 tmpIUCNspp.close()
 
+print('Gathering IUCN data for unsmatched species...')
 # ---------------------------
 # Iterate through table
 # dfSpp0 = dfSpp0.loc[tbSpp['gapSppCode'] == 'bELTRx']
@@ -401,77 +400,49 @@ dfGE_y = pd.read_csv(home + 'tmpGE_y.csv')
 dfGE = pd.merge(dfGE_x, dfGE_y, on="Spp", how='inner')   
 # Percent Spp-L2 (spp-L2 / spp-Conus)
 dfGE['percL2'] = (dfGE['totalSppPix_x']/dfGE['totalSppPix_y'])*100    
-# Classify Spp-L2 as endemic if >= 50% (1=L2 endemic, 0=not endemic)
-dfGE['L2endemic'] = np.where(dfGE['percL2']>=75.0, 1, 0) 
+# Classify Spp-L2 as endemic if >= 75% (1=L2 endemic, 0=not endemic)
+dfGE['L2endemic'] = np.where(dfGE['percL2']>=75.0, 1, 0)
+# Subset L2 Endemics
+dfGE = dfGE.loc[dfGE['L2endemic'] == 1]
+# Subset the columns
+dfGE = dfGE[['Spp', 'L2endemic']]
+# rename the columns
+dfGE = dfGE.rename(index=str, columns={"Spp":"gapSppCode"})
 
 
-# Also include species with a distribution that is in the lower 10% of all
-#  the distributions for species in that taxa.   
-#dfSQL.to_csv(home + 'tmpSQL.csv', index=False)
-#dfGE.to_csv(home + 'tmpGE.csv', index=False)
+# LOWER 10% OF TAXA
+# Identify species that have distributions in the lower 10% of taxa.
 dfTSP = dfSQL.groupby(['Taxa', 'Spp']).agg({'totalSppPix': ['sum']})
 # Convert index into column
 dfTSP = dfTSP.reset_index().to_csv(home + 'tmpTSP.csv', index=False)  
 # Remove 2nd line of multi-index header
-import pyexcel as pe         #  pip install pyexcel
->>> sheet = pe.load("SLV.csv")
->>> del sheet.row[1]             # first row starts at index 0
->>> sheet.save_as("SLV.csv")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-a = 0.1
-df10p = (dfTSP.groupby('Taxa',group_keys=False).apply(lambda x: x.nlargest(int(len(x) * a), 'sum')))
-print (df10p)     
-
-
-
-
-
-
-
-# Apply L2endemic to all records of species?
-
-
-
-# Subset L2 Endemics
-dfGE = dfGE.loc[dfGE['L2endemic'] == 1]
+import pyexcel as pe
+sheet = pe.load(home + 'tmpTSP.csv')
+del sheet.row[1]
+sheet.save_as(home + 'tmpTSP.csv')
+# Remove subspecies
+dfTSP = pd.read_csv(home + 'tmpTSP.csv')
+# Subset to full species (n = 1590)
+dfTSP = dfTSP[dfTSP['Spp'].str.slice(5,6) == 'x']
+# Order each taxa
+dfTSP['Rank'] = dfTSP.groupby(['Taxa'])['totalSppPix'].rank(ascending=True)
+#dfTSP.to_csv(home + 'dfTSP.csv', index=False)
+# Identify bottom 10% within each taxa
+a = 0.1014      # needed 10.14% to match
+df10p = (dfTSP.groupby('Taxa',group_keys=False).apply(lambda x: x.nsmallest(int(len(x) * a), 'Rank')))
+#df10p.to_csv(home + 'tmp10p.csv', index=False)
+df10p['spp10p'] = 1
 # Subset the columns
-dfGE = dfGE[['Spp', 'percL2', 'L2endemic']]
+df10p = df10p[['Spp', 'spp10p']]
 # rename the columns
-dfGE = dfGE.rename(index=str, columns={"Spp":"gapSppCode"})
+df10p = df10p.rename(index=str, columns={"Spp":"gapSppCode"})
 
 # Remove SQL table from memory
 del [dfSQL]
 gc.collect()
 dfSQL=pd.DataFrame()
 
-# Open MatchJenk CSV file as dataframe if available,
-#  if not, then run MatchJenkinksIUCN.py to create it
-try:
-    dfJM = pd.read_csv(home + 'tblMatchJenkins.csv')
-    print('Opening match table for JenkinIUCN list...')
-except:
-    print('Creating match table for JenkinIUCN list...')
-    from MatchJenkinsIUCN import *
-    
-# Remove unnecessary columns
-dfJM = dfJM[['gapSppCode', 'Jend']]
-# Drop duplicate records
-dfJM.drop_duplicates(keep='first',inplace=True)
-
-# Join Gap-IUCN, HabitatBreadth, GeographicRange and JenkMatch 
+# Join Gap-IUCN, HabitatBreadth, GeographicRange and Spp10p 
 dfSppInfo = pd.merge(pd.merge(pd.merge(
                 dfGI, 
                 dfMPU, 
@@ -480,7 +451,7 @@ dfSppInfo = pd.merge(pd.merge(pd.merge(
                     dfGE, 
                     on='gapSppCode', 
                     how='left'),
-                        dfJM,
+                        df10p,
                         on='gapSppCode',
                         how='left')
 
@@ -491,19 +462,19 @@ dfSppInfo['PopulationTrend'] = dfSppInfo['PopulationTrend'].replace(0, '', regex
 
 # Round and convert to integer
 dfSppInfo['L2endemic'] = dfSppInfo['L2endemic'].round().astype(int)
-dfSppInfo['Jend'] = dfSppInfo['Jend'].round().astype(int)
+dfSppInfo['spp10p'] = dfSppInfo['spp10p'].round().astype(int)
     
 print('Running calculations on species information...')
-# Calc Endemic=1 if both L2endemic and Jend equal 1
+# Calc Endemic=1 if either L2endemic and spp10p equal 1
 '''   
-L2endemic    Jend    Endemic
+L2endemic    spp10p    Endemic
     0          0        0
-    0          1        0
-    1          0        0
+    0          1        1
+    1          0        1
     1          1        1
 '''    
 def setEndemic(row):
-    if (row['L2endemic'] == 1) & (row['Jend'] == 1):
+    if (row['L2endemic'] == 1) | (row['spp10p'] == 1):
         val = '1'
     else:
         val = '0'
